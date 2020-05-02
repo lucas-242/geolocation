@@ -28,7 +28,7 @@
     "@ionic/angular": "^5.0.0",
     "@types/googlemaps": "^3.39.4",
     "cordova-android": "8.1.0",
-    "cordova-plugin-add-swift-support": "^2.0.2",
+    "cordova-plugin-add-swift-support": "^1.6.0",
     "cordova-plugin-compat": "^1.2.0",
     "cordova-plugin-geofence": "^0.7.0",
     "cordova-plugin-geolocation": "^4.0.2",
@@ -81,7 +81,8 @@
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
       "cordova-plugin-ionic-keyboard": {},
-      "cordova-plugin-geofence": {}
+      "cordova-plugin-geofence": {},
+      "cordova-plugin-add-swift-support": {}
     },
     "platforms": [
       "android"

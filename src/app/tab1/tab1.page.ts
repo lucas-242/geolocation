@@ -4,6 +4,7 @@ import { Platform } from '@ionic/angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Address } from '../models/address';
 import { AddressService } from '../services/address.service';
+import { Geofence } from '@ionic-native/geofence/ngx';
 
 @Component({
   selector: 'app-tab1',
@@ -35,11 +36,19 @@ export class Tab1Page {
     private platform: Platform,
     private addressService: AddressService,
     private geolocation: Geolocation,
-    private nativeGeocoder: NativeGeocoder
+    private nativeGeocoder: NativeGeocoder,
+    private geofence: Geofence
   ) {
     this.platform.ready().then(() => {
       this.getCurrentCoordinates();
     });
+
+    /**Geofence */
+    geofence.initialize().then(
+      () => console.log('Geofence Plugin Ready'),
+      (err) => console.log(err)
+    )
+
   }
 
 
@@ -110,4 +119,27 @@ export class Tab1Page {
     }
     return address.slice(0, -2);
   }
+
+  private addGeofence() {
+    /**Opções que descrevem o Geofence */
+    let fence = {
+      id: '0001',
+      latitude:       -22.9015, //Centro do raio da Geofence
+      longitude:      -43.1763,
+      radius:         5, //Raio do geofence em metros
+      transitionType: 3, //Comportamento de transição
+      notification: { //Configuração de notificação
+          id:             1,
+          title:          'Casa do Yuri',
+          text:           'Você cruzou a fronteira da casa do yuri.',
+          openAppOnClick: true //Abre o APP quando clicar na notificação
+      }
+    }
+  
+    this.geofence.addOrUpdate(fence).then(
+       () => console.log('Geofence added'),
+       (err) => console.log('Geofence failed to add')
+     );
+  }
+
 }
