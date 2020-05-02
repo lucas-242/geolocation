@@ -20,8 +20,8 @@ export class AddressService {
 
             this.getAddressByLatLng(address.latitude, address.longitude).subscribe(
                 response => {
-                    address = this.getCountryInfo(response, address);
-                    this.getNeighborhoodInfo(response, address);
+                    // address = this.getCountryInfo(response, address);
+                    address = this.getAddressInfo(response, address);
 
                     observer.next(address);
                     observer.complete();
@@ -35,17 +35,6 @@ export class AddressService {
     }
 
     /**
-     * Busca informações da localização por Cep
-     * @param zipCode Cep que será usado para efetuar a busca
-     */
-    getAddressByZipCode(zipCode: string): Observable<GoogleLocationModel> {
-        let parameters = `postal_code: ${zipCode}`;
-        return this.apiHttp.get<GoogleLocationModel>(
-            `https://maps.googleapis.com/maps/api/geocode/json?address=${parameters}&key=AIzaSyDG95Xl3hF3O3blkW56R-spSAVASK8gkns&language=en`
-        );
-    }
-
-    /**
      * Busca informações da localização por Latitude e Longitude
      * @param lat Latitude
      * @param lng Longitude
@@ -53,49 +42,19 @@ export class AddressService {
     getAddressByLatLng(lat: number, lng: number): Observable<GoogleLocationModel> {
         let parameters = `${lat}, ${lng}`;
         return this.apiHttp.get<GoogleLocationModel>(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${parameters}&key=AIzaSyDG95Xl3hF3O3blkW56R-spSAVASK8gkns&language=en`
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${parameters}&key=AIzaSyCO4gwBdfPiIRlL3objUhR755yjP7uOxvg&language=en`
         );
     }
 
-    /**
-     * Verifica as informações referente a Latitude, Longitude, País, Estado e Cidade 
-     * dentro do objeto de resposta da API do google
-     * @param model Objeto de resposta do google
-     * @param zipCode Cep do local
-     * @returns Instância de Address
-     */
-    private getCountryInfo(model: GoogleLocationModel, address: Address) {
-
-        let googleResponse = model.results[0];
-
-        for (var i = 0; i < Object.keys(googleResponse.address_components).length; i++) {
-            let types = googleResponse.address_components[i].types
-
-            if (types.indexOf('country') != -1) {
-                address.country = googleResponse.address_components[i].long_name
-            }
-
-            if (types.indexOf('administrative_area_level_1') != -1) {
-                address.state = googleResponse.address_components[i].short_name
-            }
-
-            if (types.indexOf('administrative_area_level_2') != -1) {
-                address.city = googleResponse.address_components[i].long_name
-            }
-        }
-
-        return address
-    }
 
     /**
      * Verifica as informações referente a Bairro e Rua dentro do objeto de resposta da API do google
      * @param model Objeto de resposta do google
      * @param address Objeto que será alterado
      */
-    private getNeighborhoodInfo(model: GoogleLocationModel, address: Address) {
+    private getAddressInfo(model: GoogleLocationModel, address: Address) {
         model.results.some(result => {
-            for (var i = 0; i < Object.keys(result.address_components).length; i++) {
-                debugger
+            for (let i = 0; i < Object.keys(result.address_components).length; i++) {
                 let types = result.address_components[i].types;
 
                 if (types.indexOf('route') != -1) {
@@ -113,11 +72,11 @@ export class AddressService {
                 else if (types.indexOf('country') != -1) {
                     address.country = result.address_components[i].long_name
                 }
-    
+
                 else if (types.indexOf('administrative_area_level_1') != -1) {
                     address.state = result.address_components[i].short_name
                 }
-    
+
                 else if (types.indexOf('administrative_area_level_2') != -1) {
                     address.city = result.address_components[i].long_name
                 }
@@ -132,6 +91,8 @@ export class AddressService {
                 }
             }
         });
+
+        return address;
     }
 
 }

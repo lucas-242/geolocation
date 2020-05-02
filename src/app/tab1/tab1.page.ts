@@ -5,6 +5,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Address } from '../models/address';
 import { AddressService } from '../services/address.service';
 import { Geofence } from '@ionic-native/geofence/ngx';
+import { GeofenceConfig } from '../models/geofenceConfig';
 
 @Component({
   selector: 'app-tab1',
@@ -29,6 +30,9 @@ export class Tab1Page {
     maxResults: 5
   };
 
+  /**Array de configurações do geofence */
+  geofenceArray = new Array<GeofenceConfig>();
+
   /**Flag que indica a renderização do mapa */
   showMap: boolean;
 
@@ -39,18 +43,31 @@ export class Tab1Page {
     private nativeGeocoder: NativeGeocoder,
     private geofence: Geofence
   ) {
+
+    this.mockGeofence();
+
     this.platform.ready().then(() => {
       this.getCurrentCoordinates();
+
+      geofence.initialize().then(
+        () => {
+          this.addGeofence();
+          console.log('Geofence Plugin Ready')
+        },
+        (error) => console.log(error)
+      );
     });
 
-    /**Geofence */
-    geofence.initialize().then(
-      () => console.log('Geofence Plugin Ready'),
-      (err) => console.log(err)
-    )
 
   }
 
+  /**Adiciona um novo geofence para ser escutado */
+  addGeofence() {
+    this.geofence.addOrUpdate(this.geofenceArray).then(
+      () => console.log('Geofence added'),
+      (error) => console.log('Geofence failed to add. Error: ' + error)
+    );
+  }
 
   /**Busca a latitude e longitude do local */
   getCurrentCoordinates() {
@@ -101,7 +118,7 @@ export class Tab1Page {
 
         }
       )
-     
+
     }
   }
 
@@ -120,26 +137,26 @@ export class Tab1Page {
     return address.slice(0, -2);
   }
 
-  private addGeofence() {
-    /**Opções que descrevem o Geofence */
-    let fence = {
-      id: '0001',
-      latitude:       -22.9015, //Centro do raio da Geofence
-      longitude:      -43.1763,
-      radius:         5, //Raio do geofence em metros
-      transitionType: 3, //Comportamento de transição
-      notification: { //Configuração de notificação
-          id:             1,
-          title:          'Casa do Yuri',
-          text:           'Você cruzou a fronteira da casa do yuri.',
-          openAppOnClick: true //Abre o APP quando clicar na notificação
-      }
-    }
-  
-    this.geofence.addOrUpdate(fence).then(
-       () => console.log('Geofence added'),
-       (err) => console.log('Geofence failed to add')
-     );
+  /**Define o array de geofence */
+  private mockGeofence() {
+    this.geofenceArray.push(
+      new GeofenceConfig('0001', -22.9015, -43.1763, 5, 3,
+        {
+          id: 1,
+          title: 'Casa do Yuri',
+          text: 'Você cruzou a fronteira da casa do Yuri.',
+          openAppOnClick: true
+        }
+      ),
+      new GeofenceConfig('0002', -22.8794, -43.4699, 10, 3,
+        {
+          id: 2,
+          title: 'Casa do Lucas',
+          text: 'Você cruzou a fronteira da casa do Lucas.',
+          openAppOnClick: true
+        }
+      )
+    );
   }
 
 }
