@@ -96,7 +96,6 @@ export class Tab1Page {
   getAddressByCordova(lat: number, lng: number) {
     this.nativeGeocoder.reverseGeocode(lat, lng, this.nativeGeocoderOptions)
       .then((res: NativeGeocoderResult[]) => {
-        debugger
         this.address = this.pretifyAddress(res[0]);
       })
       .catch((error: any) => {
