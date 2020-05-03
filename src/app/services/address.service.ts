@@ -95,7 +95,6 @@ export class AddressService {
     private getNeighborhoodInfo(model: GoogleLocationModel, address: Address) {
         model.results.some(result => {
             for (var i = 0; i < Object.keys(result.address_components).length; i++) {
-                debugger
                 let types = result.address_components[i].types;
 
                 if (types.indexOf('route') != -1) {
