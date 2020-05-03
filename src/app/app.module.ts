@@ -13,6 +13,8 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder } from '@ionic-native/native-geocoder/ngx';
 import { AddressService } from './services/address.service';
 import { HttpClientModule } from '@angular/common/http';
+import { Geofence } from '@ionic-native/geofence/ngx';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -23,7 +25,8 @@ import { HttpClientModule } from '@angular/common/http';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     Geolocation,
     NativeGeocoder,
-    AddressService
+    AddressService,
+    Geofence
   ],
   bootstrap: [AppComponent]
 })
